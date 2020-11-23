@@ -57,8 +57,8 @@ class Application:
                 print()
                 print(choice_message)
         return {
-            'index' : action_index,
-            'str' : action_str
+            'index': action_index,
+            'str': action_str
         }
 
     @staticmethod
