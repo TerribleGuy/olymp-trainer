@@ -29,7 +29,7 @@ class Application:
         return []
 
     @staticmethod
-    def action_choice(actions, choice_title='Выберите действие:', reprint_after=5) -> int:
+    def action_choice(actions, choice_title='Выберите действие:', reprint_after=5) -> dict:
         allowed = []
         choice_message = choice_title + '\n'
         if reprint_after < 1:
@@ -39,26 +39,35 @@ class Application:
             allowed.append(str(i + 1))
             choice_message = choice_message + '{}. {}\n'.format(i + 1, actions[i])
         print(choice_message)
-        action = -1
-        while action == -1:
+        action_index = -1
+        action_str = ''
+        while action_index == -1:
             commands_list = Application.get_user_input(allowed=allowed, allowed_lines=True, max_tries=reprint_after)
             if len(commands_list):
                 try:
-                     action = int(commands_list[0]) - 1
+                     action_index = int(commands_list[0]) - 1
+                     action_str = actions[action_index]
                 except ValueError:
                     try:
-                        action = actions.index(commands_list[0])
+                        action_index = actions.index(commands_list[0])
+                        action_str = commands_list[0]
                     except ValueError:
                         action = -1
             else:
                 print()
                 print(choice_message)
-        return action
+        return {
+            'index' : action_index,
+            'str' : action_str
+        }
+
+    @staticmethod
+    def process_actions(actions_dict, choice_title='Выберите действие:', reprint_after=5):
+        actions_list = []
+        for key in actions_dict.keys():
+            actions_list.append(key)
+        selected_action = Application.action_choice(actions_list, choice_title=choice_title, reprint_after=reprint_after)
+        actions_dict[selected_action['str']]()
 
     def main_loop(self):
-        is_exit = False
-        while not is_exit:
-            action = self.action_choice(['Начать', 'Выйти'])
-            if action == 1:
-                is_exit = True
-
+        pass
