@@ -1,5 +1,9 @@
+from objects.application import Application
+
+
 def main():
-    print('Hello, Worold!')
+    application = Application()
+    application.main_loop()
 
 
 if __name__ == '__main__':
