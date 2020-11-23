@@ -1,6 +1,12 @@
+from scenes.main_menu import MainMenu
+
+
 class Application:
     def __init__(self):
-        pass
+        self.scenes = []
+        self.scenes.append(MainMenu(self))
+        self.current_scene = 0
+        self.is_end = False
 
     @staticmethod
     def get_user_input(allowed=None, allowed_lines=False, max_tries=0, retry_message='Неверная команда, попробуйте еще раз') -> list:
@@ -69,5 +75,12 @@ class Application:
         selected_action = Application.action_choice(actions_list, choice_title=choice_title, reprint_after=reprint_after)
         actions_dict[selected_action['str']]()
 
+    def change_scene(self, index):
+        self.current_scene = index
+
+    def exit_application(self):
+        self.is_end = True
+
     def main_loop(self):
-        pass
+        while not self.is_end:
+            self.scenes[self.current_scene].process_logic()
