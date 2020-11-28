@@ -1,10 +1,10 @@
-from scenes.main_menu import MainMenu
+from scenes.main_menu import MainMenuScene
 
 
 class Application:
     def __init__(self):
         self.scenes = []
-        self.scenes.append(MainMenu(self))
+        self.scenes.append(MainMenuScene(self))
         self.current_scene = 0
         self.is_end = False
 
@@ -51,8 +51,8 @@ class Application:
             commands_list = Application.get_user_input(allowed=allowed, allowed_lines=True, max_tries=reprint_after)
             if len(commands_list):
                 try:
-                     action_index = int(commands_list[0]) - 1
-                     action_str = actions[action_index]
+                    action_index = int(commands_list[0]) - 1
+                    action_str = actions[action_index]
                 except ValueError:
                     try:
                         action_index = actions.index(commands_list[0])

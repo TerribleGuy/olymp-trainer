@@ -1,7 +1,7 @@
 from scenes.base_scene import BaseScene
 
 
-class MainMenu(BaseScene):
+class MainMenuScene(BaseScene):
     def process_logic(self):
         script = {
             'Начать': lambda: self.application.change_scene(0),
