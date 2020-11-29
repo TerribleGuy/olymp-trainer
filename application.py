@@ -8,30 +8,57 @@ class Application:
         self.current_scene = 0
         self.is_end = False
 
+    def process_force_commands(self, command) -> bool:
+        if isinstance(command, str):
+            command = command.strip().split()
+        if command[0] != '!':
+            return False
+        if len(command) > 1:
+            if command[1] == 'exit':
+                if len(command) > 2:
+                    try:
+                        self.change_scene(int(command[2]))
+                        return True
+                    except ValueError:
+                        pass
+                self.change_scene(0)
+                return True
+        return False
+
     @staticmethod
-    def get_user_input(allowed=None, allowed_lines=False, max_tries=0, retry_message='Неверная команда, попробуйте еще раз') -> list:
+    def get_input_line(allowed=None, max_tries=0, retry_message='Неверная команда, попробуйте еще раз') -> str:
         if not (allowed is None) and not len(allowed):
             allowed = None
         if max_tries == 0:
             max_tries = 1000000000
-        for i in range(max_tries):
-            command = input().strip()
-            if len(command):
-                if allowed is None:
-                    if allowed_lines:
-                        return [command]
-                    else:
-                        return command.split()
-                else:
-                    if allowed_lines:
-                        if command in allowed:
-                            return [command]
-                    else:
-                        command = command.split()
-                        if command[0] in allowed:
-                            return command
-            if i < max_tries - 1:
+        cur_try = 0
+        while cur_try < max_tries:
+            input_line = input().strip()
+            if not len(input_line):
+                continue
+            if (allowed is None) or (input_line in allowed):
+                return input_line
+            if cur_try < max_tries - 1:
                 print(retry_message)
+            cur_try += 1
+        return ''
+
+    @staticmethod
+    def get_input_commands(allowed=None, max_tries=0, retry_message='Неверная команда, попробуйте еще раз') -> list:
+        if not (allowed is None) and not len(allowed):
+            allowed = None
+        if max_tries == 0:
+            max_tries = 1000000000
+        cur_try = 0
+        while cur_try < max_tries:
+            commands = input().strip().split()
+            if not len(commands):
+                continue
+            if (allowed is None) or (commands[0] in allowed):
+                return commands
+            if cur_try < max_tries - 1:
+                print(retry_message)
+            cur_try += 1
         return []
 
     @staticmethod
@@ -48,18 +75,19 @@ class Application:
         action_index = -1
         action_str = ''
         while action_index == -1:
-            commands_list = Application.get_user_input(allowed=allowed, allowed_lines=True, max_tries=reprint_after)
-            if len(commands_list):
+            input_line = Application.get_input_line(allowed=allowed, max_tries=reprint_after)
+            if input_line != '':
                 try:
-                    action_index = int(commands_list[0]) - 1
+                    action_index = int(input_line) - 1
                     action_str = actions[action_index]
                 except ValueError:
                     try:
-                        action_index = actions.index(commands_list[0])
-                        action_str = commands_list[0]
+                        action_index = actions.index(input_line)
+                        action_str = input_line
                     except ValueError:
-                        action = -1
-            else:
+                        action_index = -1
+                        action_str = ''
+            if action_index == -1:
                 print()
                 print(choice_message)
         return {
