@@ -1,10 +1,15 @@
-from scenes.main_menu import MainMenuScene
+from scenes import MainMenuScene, AddTaskScene
+from objects.task_manager import TaskManager
 
 
 class Application:
+    MAIN_MENU_INDEX = 0
+    ADD_TASK_INDEX = 1
+
     def __init__(self):
-        self.scenes = []
-        self.scenes.append(MainMenuScene(self))
+        self.task_manager = TaskManager('tasks/info.txt')
+        print(self.task_manager.read_from_file())
+        self.scenes = [MainMenuScene(self), AddTaskScene(self, self.task_manager)]
         self.current_scene = 0
         self.is_end = False
 
@@ -21,7 +26,7 @@ class Application:
                         return True
                     except ValueError:
                         pass
-                self.change_scene(0)
+                self.change_scene(self.MAIN_MENU_INDEX)
                 return True
         return False
 
